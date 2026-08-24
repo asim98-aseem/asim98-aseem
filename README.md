@@ -11,6 +11,30 @@ Available for **remote roles and contract work** (W-8BEN, EoR-friendly — Deel,
 
 ---
 
+## 📦 Open source
+
+### [**odoo-shopify-connector**](https://github.com/asim98-aseem/odoo-shopify-connector) — run it yourself with `docker compose up`
+
+Two-way Odoo 19 ↔ Shopify sync over the Admin **GraphQL** API. Built around the
+three things that actually break Shopify integrations in production, each with a
+test that fails if the guard is removed:
+
+- **Shopify returns HTTP 200 for rejected writes** — the client raises on
+  `userErrors`, so a failed push can't be logged as a success.
+- **The rate limit is cost-based** — it reads `throttleStatus` and computes the
+  real backoff, `(1000−50)/100 = 9.5s`, rather than sleeping on a guess.
+- **Delivery is at-least-once** — every write path is idempotent, guarded by
+  database unique indexes rather than app-level check-then-create, because only
+  an index can arbitrate two workers racing the same retry.
+
+Plus HMAC-verified webhooks (constant-time compare, with a test that fails if
+someone swaps it for `==`), multi-store, multi-company, and CI that runs both an
+Odoo-free unit suite and full Odoo integration tests on a real PostgreSQL.
+
+`19 integration tests` · `37 unit tests` · `MIT`
+
+---
+
 ## What I've built
 
 ### 🛠 Jewellery ERP on Odoo 19
@@ -43,7 +67,7 @@ A field-operations and accounting platform for smallholder farms — **513 commi
 
 `React` `TypeScript` `Supabase` `PostgreSQL` `Vite` `Vitest` `Vercel` `GitHub Actions`
 
-> Both are private client/commercial repos — happy to walk through the architecture,
+> These two are private client/commercial repos — happy to walk through the architecture,
 > the schema, or any of the code on a call.
 
 ---
